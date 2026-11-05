@@ -34,6 +34,9 @@ public abstract class BackupPromptScreenMixin extends Screen {
     @Unique
     private String idontcare$worldDirectory;
 
+    @Unique
+    private boolean idontcare$checkedState;
+
     protected BackupPromptScreenMixin(Text title) {
         super(title);
     }
@@ -78,10 +81,13 @@ public abstract class BackupPromptScreenMixin extends Screen {
             int width = CheckboxWidget.getCheckboxSize(this.textRenderer) + 4 + this.textRenderer.getWidth(text);
             int x = this.width / 2 - width / 2;
 
+            boolean initialChecked = this.idontcare$checkbox != null ? this.idontcare$checkbox.isChecked() : this.idontcare$checkedState;
+
             this.idontcare$checkbox = CheckboxWidget.builder(text, this.textRenderer)
                 .pos(x, y)
                 .maxWidth(width)
-                .checked(false)
+                .checked(initialChecked)
+                .callback((cb, checked) -> this.idontcare$checkedState = checked)
                 .build();
 
             this.addDrawableChild(this.idontcare$checkbox);

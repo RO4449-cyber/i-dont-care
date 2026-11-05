@@ -28,6 +28,25 @@ public abstract class IntegratedServerLoaderMixin {
     @Unique
     private static final SystemToast.Type IDONTCARE_TOAST_TYPE = new SystemToast.Type(15000L);
 
+    @Unique
+    private void idontcare$handleBypassActions(LevelStorage.Session session) {
+        boolean doBackup = ModConfig.getInstance().shouldCreateBackup(session.getDirectoryName());
+        if (doBackup && !WorldLoadContext.wasBackedUp()) {
+            EditWorldScreen.backupLevel(session);
+            WorldLoadContext.markBackedUp();
+        }
+        if (ModConfig.getInstance().showToast && !WorldLoadContext.wasToastShown()) {
+            WorldLoadContext.markToastShown();
+            this.client.getToastManager().add(
+                new SystemToast(
+                    IDONTCARE_TOAST_TYPE,
+                    Text.translatable("idontcare.toast.title"),
+                    Text.translatable(doBackup ? "idontcare.toast.bypassed_with_backup" : "idontcare.toast.bypassed", session.getDirectoryName())
+                )
+            );
+        }
+    }
+
     @Inject(method = "start(Ljava/lang/String;Ljava/lang/Runnable;)V", at = @At("HEAD"))
     private void idontcare$onStartByName(String name, Runnable onCancel, CallbackInfo ci) {
         WorldLoadContext.setCurrentWorld(name);
@@ -52,19 +71,7 @@ public abstract class IntegratedServerLoaderMixin {
 
         LevelSummary.ConversionWarning conversionWarning = summary.getConversionWarning();
         if (conversionWarning.promptsBackup() && ModConfig.getInstance().isWorldBypassed(session.getDirectoryName())) {
-            boolean doBackup = ModConfig.getInstance().shouldCreateBackup(session.getDirectoryName());
-            if (doBackup) {
-                EditWorldScreen.backupLevel(session);
-            }
-            if (ModConfig.getInstance().showToast) {
-                this.client.getToastManager().add(
-                    new SystemToast(
-                        IDONTCARE_TOAST_TYPE,
-                        Text.translatable("idontcare.toast.title"),
-                        Text.translatable(doBackup ? "idontcare.toast.bypassed_with_backup" : "idontcare.toast.bypassed", session.getDirectoryName())
-                    )
-                );
-            }
+            this.idontcare$handleBypassActions(session);
             this.start(session, levelProperties, false, onCancel);
             ci.cancel();
         }
@@ -84,19 +91,7 @@ public abstract class IntegratedServerLoaderMixin {
     ) {
         WorldLoadContext.setCurrentWorld(session.getDirectoryName());
         if (ModConfig.getInstance().isWorldBypassed(session.getDirectoryName())) {
-            boolean doBackup = ModConfig.getInstance().shouldCreateBackup(session.getDirectoryName());
-            if (doBackup) {
-                EditWorldScreen.backupLevel(session);
-            }
-            if (ModConfig.getInstance().showToast) {
-                this.client.getToastManager().add(
-                    new SystemToast(
-                        IDONTCARE_TOAST_TYPE,
-                        Text.translatable("idontcare.toast.title"),
-                        Text.translatable(doBackup ? "idontcare.toast.bypassed_with_backup" : "idontcare.toast.bypassed", session.getDirectoryName())
-                    )
-                );
-            }
+            this.idontcare$handleBypassActions(session);
             callback.run();
             ci.cancel();
         }

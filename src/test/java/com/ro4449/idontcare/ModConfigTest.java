@@ -75,7 +75,18 @@ public class ModConfigTest {
     public void testWorldLoadContext() {
         WorldLoadContext.setCurrentWorld("my_survival_world");
         Assertions.assertEquals("my_survival_world", WorldLoadContext.getCurrentWorld());
+        Assertions.assertFalse(WorldLoadContext.wasBackedUp());
+        Assertions.assertFalse(WorldLoadContext.wasToastShown());
+
+        WorldLoadContext.markBackedUp();
+        Assertions.assertTrue(WorldLoadContext.wasBackedUp());
+
+        WorldLoadContext.markToastShown();
+        Assertions.assertTrue(WorldLoadContext.wasToastShown());
+
         WorldLoadContext.clear();
         Assertions.assertNull(WorldLoadContext.getCurrentWorld());
+        Assertions.assertFalse(WorldLoadContext.wasBackedUp());
+        Assertions.assertFalse(WorldLoadContext.wasToastShown());
     }
 }
