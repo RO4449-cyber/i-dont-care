@@ -1,0 +1,18 @@
+{
+  "idontcare.checkbox.dont_show": "Don't show again for this world",
+  "idontcare.checkbox.dont_show_edit": "Don't show backup warning",
+  "idontcare.config.title": "I Don't Care Settings",
+  "idontcare.config.global_bypass": "Global Bypass (All Worlds)",
+  "idontcare.config.global_bypass.desc": "Suppress world warning popups for all worlds automatically.",
+  "idontcare.config.default_action": "Bypass Action",
+  "idontcare.config.action.skip": "Load Without Backup",
+  "idontcare.config.action.backup": "Create Backup & Load",
+  "idontcare.config.show_toast": "Show Bypass Notification",
+  "idontcare.config.show_toast.desc": "Display a notification toast when a world popup is bypassed.",
+  "idontcare.config.remembered_count": "Remembered Worlds: %d",
+  "idontcare.config.reset_worlds": "Reset All Remembered Worlds",
+  "idontcare.config.reset_worlds.success": "Reset all remembered world preferences!",
+  "idontcare.toast.title": "I Don't Care",
+  "idontcare.toast.bypassed": "Bypassed warning for %s",
+  "idontcare.toast.bypassed_with_backup": "Created backup & loaded %s"
+}
