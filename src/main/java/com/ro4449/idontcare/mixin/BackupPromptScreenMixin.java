@@ -52,6 +52,7 @@ public abstract class BackupPromptScreenMixin extends Screen {
         CallbackInfo ci
     ) {
         this.idontcare$worldDirectory = WorldLoadContext.getCurrentWorld();
+        WorldLoadContext.clear();
         if (this.idontcare$worldDirectory != null) {
             BackupPromptScreen.Callback original = this.callback;
             this.callback = (backup, eraseCache) -> {
@@ -85,10 +86,5 @@ public abstract class BackupPromptScreenMixin extends Screen {
 
             this.addDrawableChild(this.idontcare$checkbox);
         }
-    }
-
-    @Inject(method = "removed", at = @At("TAIL"))
-    private void idontcare$onRemoved(CallbackInfo ci) {
-        WorldLoadContext.clear();
     }
 }
