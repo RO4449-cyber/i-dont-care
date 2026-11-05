@@ -77,12 +77,5 @@ public class ModConfigTest {
         Assertions.assertEquals("my_survival_world", WorldLoadContext.getCurrentWorld());
         WorldLoadContext.clear();
         Assertions.assertNull(WorldLoadContext.getCurrentWorld());
-
-        WorldLoadContext.setPendingNotification("world1", true);
-        WorldLoadContext.PendingBypassNotification notif = WorldLoadContext.pollPendingNotification();
-        Assertions.assertNotNull(notif);
-        Assertions.assertEquals("world1", notif.worldName());
-        Assertions.assertTrue(notif.backupCreated());
-        Assertions.assertNull(WorldLoadContext.pollPendingNotification());
     }
 }

@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.LevelSummary;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -23,6 +24,9 @@ public abstract class IntegratedServerLoaderMixin {
 
     @Shadow
     protected abstract void start(LevelStorage.Session session, Dynamic<?> levelProperties, boolean safeMode, Runnable onCancel);
+
+    @Unique
+    private static final SystemToast.Type IDONTCARE_TOAST_TYPE = new SystemToast.Type(15000L);
 
     @Inject(method = "start(Ljava/lang/String;Ljava/lang/Runnable;)V", at = @At("HEAD"))
     private void idontcare$onStartByName(String name, Runnable onCancel, CallbackInfo ci) {
@@ -52,11 +56,10 @@ public abstract class IntegratedServerLoaderMixin {
             if (doBackup) {
                 EditWorldScreen.backupLevel(session);
             }
-            WorldLoadContext.setPendingNotification(session.getDirectoryName(), doBackup);
             if (ModConfig.getInstance().showToast) {
                 this.client.getToastManager().add(
                     new SystemToast(
-                        SystemToast.Type.WORLD_BACKUP,
+                        IDONTCARE_TOAST_TYPE,
                         Text.translatable("idontcare.toast.title"),
                         Text.translatable(doBackup ? "idontcare.toast.bypassed_with_backup" : "idontcare.toast.bypassed", session.getDirectoryName())
                     )
@@ -85,11 +88,10 @@ public abstract class IntegratedServerLoaderMixin {
             if (doBackup) {
                 EditWorldScreen.backupLevel(session);
             }
-            WorldLoadContext.setPendingNotification(session.getDirectoryName(), doBackup);
             if (ModConfig.getInstance().showToast) {
                 this.client.getToastManager().add(
                     new SystemToast(
-                        SystemToast.Type.WORLD_BACKUP,
+                        IDONTCARE_TOAST_TYPE,
                         Text.translatable("idontcare.toast.title"),
                         Text.translatable(doBackup ? "idontcare.toast.bypassed_with_backup" : "idontcare.toast.bypassed", session.getDirectoryName())
                     )
