@@ -115,4 +115,11 @@ public class ModConfig {
     public void resetAllWorlds() {
         this.rememberedWorlds.clear();
     }
+
+    public void resetAllToDefaults() {
+        this.globalBypass = false;
+        this.defaultBypassAction = BypassAction.SKIP;
+        this.showToast = true;
+        this.rememberedWorlds.clear();
+    }
 }

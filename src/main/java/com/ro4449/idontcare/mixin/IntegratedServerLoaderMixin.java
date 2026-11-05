@@ -52,6 +52,7 @@ public abstract class IntegratedServerLoaderMixin {
             if (doBackup) {
                 EditWorldScreen.backupLevel(session);
             }
+            WorldLoadContext.setPendingNotification(session.getDirectoryName(), doBackup);
             if (ModConfig.getInstance().showToast) {
                 this.client.getToastManager().add(
                     new SystemToast(
@@ -84,6 +85,7 @@ public abstract class IntegratedServerLoaderMixin {
             if (doBackup) {
                 EditWorldScreen.backupLevel(session);
             }
+            WorldLoadContext.setPendingNotification(session.getDirectoryName(), doBackup);
             if (ModConfig.getInstance().showToast) {
                 this.client.getToastManager().add(
                     new SystemToast(

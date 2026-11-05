@@ -12,6 +12,7 @@ import net.minecraft.world.level.storage.LevelStorage;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -23,6 +24,9 @@ public abstract class EditWorldScreenMixin extends Screen {
 
     @Shadow @Final
     private LevelStorage.Session storageSession;
+
+    @Unique
+    private boolean idontcare$pendingBypassState;
 
     protected EditWorldScreenMixin(Text title) {
         super(title);
@@ -43,20 +47,30 @@ public abstract class EditWorldScreenMixin extends Screen {
         CallbackInfo ci
     ) {
         String worldId = this.storageSession.getDirectoryName();
-        boolean bypassed = ModConfig.getInstance().isWorldBypassed(worldId);
+        this.idontcare$pendingBypassState = ModConfig.getInstance().isWorldBypassed(worldId);
 
-        CheckboxWidget checkbox = CheckboxWidget.builder(
-            Text.translatable("idontcare.checkbox.dont_show_edit"),
-            client.textRenderer
-        )
-        .checked(bypassed)
-        .maxWidth(200)
-        .callback((cb, checked) -> {
-            ModConfig.getInstance().setWorldBypassed(worldId, checked);
-            ModConfig.getInstance().save();
-        })
-        .build();
+        Text text = Text.translatable("idontcare.checkbox.dont_show_edit");
+        // Calculate the exact visual width of the checkbox icon + padding + label
+        int contentWidth = CheckboxWidget.getCheckboxSize(client.textRenderer) + 4 + client.textRenderer.getWidth(text);
 
-        this.layout.add(checkbox);
+        CheckboxWidget checkbox = CheckboxWidget.builder(text, client.textRenderer)
+            .checked(this.idontcare$pendingBypassState)
+            .maxWidth(contentWidth)
+            .callback((cb, checked) -> {
+                // Only update the pending state; do not write to disk yet!
+                this.idontcare$pendingBypassState = checked;
+            })
+            .build();
+
+        // Center the checkbox horizontally within the layout column
+        this.layout.add(checkbox, positioner -> positioner.alignHorizontalCenter());
+    }
+
+    @Inject(method = "commit", at = @At("HEAD"))
+    private void idontcare$onSave(String levelName, CallbackInfo ci) {
+        // Only save changes to config when the user explicitly clicks Save
+        String worldId = this.storageSession.getDirectoryName();
+        ModConfig.getInstance().setWorldBypassed(worldId, this.idontcare$pendingBypassState);
+        ModConfig.getInstance().save();
     }
 }

@@ -57,10 +57,32 @@ public class ModConfigTest {
     }
 
     @Test
+    public void testResetAllToDefaults() {
+        ModConfig config = new ModConfig();
+        config.globalBypass = true;
+        config.defaultBypassAction = BypassAction.BACKUP;
+        config.showToast = false;
+        config.setWorldBypassed("w1", true);
+
+        config.resetAllToDefaults();
+        Assertions.assertFalse(config.globalBypass);
+        Assertions.assertEquals(BypassAction.SKIP, config.defaultBypassAction);
+        Assertions.assertTrue(config.showToast);
+        Assertions.assertEquals(0, config.rememberedWorlds.size());
+    }
+
+    @Test
     public void testWorldLoadContext() {
         WorldLoadContext.setCurrentWorld("my_survival_world");
         Assertions.assertEquals("my_survival_world", WorldLoadContext.getCurrentWorld());
         WorldLoadContext.clear();
         Assertions.assertNull(WorldLoadContext.getCurrentWorld());
+
+        WorldLoadContext.setPendingNotification("world1", true);
+        WorldLoadContext.PendingBypassNotification notif = WorldLoadContext.pollPendingNotification();
+        Assertions.assertNotNull(notif);
+        Assertions.assertEquals("world1", notif.worldName());
+        Assertions.assertTrue(notif.backupCreated());
+        Assertions.assertNull(WorldLoadContext.pollPendingNotification());
     }
 }

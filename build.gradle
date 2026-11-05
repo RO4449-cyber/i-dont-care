@@ -21,11 +21,9 @@ dependencies {
 
     def depApiBase = fabricApi.module('fabric-api-base', project.fabric_version)
     modImplementation depApiBase
-    include depApiBase
 
     def depResourceLoader = fabricApi.module('fabric-resource-loader-v1', project.fabric_version)
     modImplementation depResourceLoader
-    include depResourceLoader
 
     modCompileOnly "com.terraformersmc:modmenu:11.0.5"
 

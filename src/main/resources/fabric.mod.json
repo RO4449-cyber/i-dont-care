@@ -3,7 +3,7 @@
   "id": "idontcare",
   "version": "${version}",
   "name": "I Don't Care",
-  "description": "Simple Mod that adds a 'Don't show again' checkbox to world backup and confirmation popups with seamless vanilla styling, per-world persistence, and Mod Menu configuration.",
+  "description": "Simple mod that adds a 'Don't show again' checkbox to backup and confirmation popups with vanilla styling.",
   "authors": [
     "RO4449"
   ],
